@@ -28,6 +28,6 @@ add_executable(find_chessboard src/calibration_wizard.cpp src/find_chessboard.h 
 target_link_libraries(find_chessboard ${OpenCV_LIBRARIES})
 target_link_libraries(find_chessboard ${catkin_LIBRARIES})
 
-add_executable(get_transforms src/get_transforms.cpp)
+add_executable(get_transforms src/icp.cpp)
 target_link_libraries(get_transforms ${PCL_LIBRARIES})
 target_link_libraries(get_transforms ${catkin_LIBRARIES})
