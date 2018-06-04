@@ -53,13 +53,13 @@ int main(int argc, char** argv) {
                                      << rquat.z() << " "
                                      << rquat.w() << " ");
 
-    // TODO: This transform is fucked.
-    // Possible reasons why it is fucked:
-    // - intrinsics are fucked
-    // - rvec->quat is fucked
-    // - scale is fucked
-    // - param order is fucked
-    // - obj_ is fucked
+    // TODO: This transform is borked.
+    // Possible reasons why it is borked:
+    // - intrinsics are borked
+    // - rvec->quat is borked
+    // - scale is borked
+    // - param order is borked
+    // - obj_ is borked
 
     return 0;
 }
