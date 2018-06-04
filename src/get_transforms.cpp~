@@ -1,0 +1,131 @@
+#include <ros/ros.h>
+#include <tf/transform_listener.h>
+#include <sensor_msgs/PointCloud2.h>
+
+// PCL
+#include <pcl/point_cloud.h>
+#include <pcl_conversions/pcl_conversions.h>
+#include <pcl/io/pcd_io.h>
+#include <pcl/point_types.h>
+#include <pcl/registration/icp.h>
+
+/*
+ros::Publisher pub;
+tf::TransformListener *listener;
+sensor_msgs::PointCloud2 output_merged, output1, output2;
+pcl::PointCloud<pcl::PointXYZ> output_merged_pcl, output1_pcl, output2_pcl;
+
+void cloud_1_cb(const sensor_msgs::PointCloud2ConstPtr& input) {
+	pcl::fromROSMsg(*input, output1_pcl);
+	//output_merged_pcl = output1_pcl;
+	//output_merged_pcl += output2_pcl;
+	//pcl::toROSMsg(output_merged_pcl, output_merged);
+	//pub.publish(output_merged);
+}
+
+void cloud_2_cb(const sensor_msgs::PointCloud2ConstPtr& input) {
+	pcl::fromROSMsg(*input, output2_pcl);
+	//output_merged_pcl = output1_pcl;
+	//output_merged_pcl += output2_pcl;
+	//pcl::toROSMsg(output_merged_pcl, output_merged);
+	//pub.publish(output_merged);
+}
+
+
+//void run_icp(pcl::PointCloud<pcl::PointXYZ> cloud_1, pcl::PointCloud<pcl::PointXYZ> cloud_2) {
+void run_icp() {
+	ROS_INFO("Attempting ICP.");
+	
+	pcl::PointCloud<pcl::PointXYZ>::Ptr cloud_in (new pcl::PointCloud<pcl::PointXYZ>);
+	pcl::PointCloud<pcl::PointXYZ>::Ptr cloud_out (new pcl::PointCloud<pcl::PointXYZ>);
+
+	// I detest the fact that I had to copy the clouds but it's the
+	// only way I could find to do it so far.
+	*cloud_in = output1_pcl;
+	*cloud_out = output2_pcl;
+
+	pcl::IterativeClosestPoint<pcl::PointXYZ, pcl::PointXYZ> icp;
+	icp.setInputSource(cloud_in);
+	icp.setInputTarget(cloud_out);
+
+	pcl::PointCloud<pcl::PointXYZ> Final;
+	icp.align(Final);
+	ROS_INFO_STREAM("has converged: " << icp.hasConverged() << 
+		      " score: " << icp.getFitnessScore() << "\n");
+	ROS_INFO_STREAM(icp.getFinalTransformation() << "\n");
+}
+
+int main(int argc, char* argv[]) {
+	std::cout << "This should print." << std::endl;
+	ros::init(argc, argv, "get_transforms");
+	ros::NodeHandle nh;
+
+	ros::Subscriber cam1 = nh.subscribe("/rgbd_cam_1/depth_registered/points", 1, cloud_1_cb);
+	ros::Subscriber cam2 = nh.subscribe("/rgbd_cam_2/depth_registered/points", 1, cloud_2_cb);
+
+
+	// pub = nh.advertise<sensor_msgs::PointCloud2>("/rgbd_cam_merged/depth_registered/points", 1);
+	ros::Rate r(10); // 10 hz
+	ROS_INFO("Initializing camera data\n");
+	while (output1_pcl.width == 0 || output2_pcl.width == 0) {
+		ros::spinOnce();
+		r.sleep();
+		ROS_INFO_STREAM("Cam 1: " << output1_pcl.width << ", Cam 2: " << output2_pcl.width << std::endl);
+	}
+
+	ROS_INFO("Camera data initialized.\n");
+	//run_icp(output1_pcl, output2_pcl);
+	run_icp();
+	//ros::spin();
+	return 0;
+}
+*/
+
+#include <iostream>
+#include <pcl/io/pcd_io.h>
+#include <pcl/point_types.h>
+#include <pcl/registration/icp.h>
+
+int
+ main (int argc, char** argv)
+{
+  pcl::PointCloud<pcl::PointXYZ>::Ptr cloud_in (new pcl::PointCloud<pcl::PointXYZ>);
+  pcl::PointCloud<pcl::PointXYZ>::Ptr cloud_out (new pcl::PointCloud<pcl::PointXYZ>);
+
+  // Fill in the CloudIn data
+  cloud_in->width    = 5;
+  cloud_in->height   = 1;
+  cloud_in->is_dense = false;
+  cloud_in->points.resize (cloud_in->width * cloud_in->height);
+  for (size_t i = 0; i < cloud_in->points.size (); ++i)
+  {
+    cloud_in->points[i].x = 1024 * rand () / (RAND_MAX + 1.0f);
+    cloud_in->points[i].y = 1024 * rand () / (RAND_MAX + 1.0f);
+    cloud_in->points[i].z = 1024 * rand () / (RAND_MAX + 1.0f);
+  }
+  std::cout << "Saved " << cloud_in->points.size () << " data points to input:"
+      << std::endl;
+  for (size_t i = 0; i < cloud_in->points.size (); ++i) std::cout << "    " <<
+      cloud_in->points[i].x << " " << cloud_in->points[i].y << " " <<
+      cloud_in->points[i].z << std::endl;
+  *cloud_out = *cloud_in;
+  std::cout << "size:" << cloud_out->points.size() << std::endl;
+  for (size_t i = 0; i < cloud_in->points.size (); ++i)
+    cloud_out->points[i].x = cloud_in->points[i].x + 0.7f;
+  std::cout << "Transformed " << cloud_in->points.size () << " data points:"
+      << std::endl;
+  for (size_t i = 0; i < cloud_out->points.size (); ++i)
+    std::cout << "    " << cloud_out->points[i].x << " " <<
+      cloud_out->points[i].y << " " << cloud_out->points[i].z << std::endl;
+  pcl::IterativeClosestPoint<pcl::PointXYZ, pcl::PointXYZ> icp;
+  icp.setInputCloud(cloud_in);
+  icp.setInputTarget(cloud_out);
+  pcl::PointCloud<pcl::PointXYZ> Final;
+  icp.align(Final);
+  std::cout << "has converged:" << icp.hasConverged() << " score: " <<
+  icp.getFitnessScore() << std::endl;
+  std::cout << icp.getFinalTransformation() << std::endl;
+
+ return (0);
+}
+
