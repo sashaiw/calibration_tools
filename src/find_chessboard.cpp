@@ -9,6 +9,7 @@
 #include <opencv2/highgui/highgui.hpp>
 #include <Eigen/Dense>
 #include <opencv2/core/eigen.hpp>
+#include <tf2/LinearMath/Quaternion.h>
 
 static const std::string OPENCV_WINDOW_1 = "Camera 1";
 static const std::string OPENCV_WINDOW_2 = "Camera 2";
@@ -107,8 +108,35 @@ double ChessboardFinder::calibrate(cv::Mat& rotationMatrix, cv::Mat& transformVe
     return rms;
 }
 
+tf2::Quaternion ChessboardFinder::rvec2tfquat(cv::Mat &rmat) {
+    //cv::Mat euler(3, 1, CV_64F);
+    //cv::Mat rmat;
+    //cv::Rodrigues(rmat, rmat);
+    ROS_INFO_STREAM(rmat);
+
+    //if (rmat.at<double>(1, 0) > .998) { // Singularity at north pole
+    //    x = 0;
+    //    y = CV_PI / 2;
+    //    z = atan2(rmat.at<double>(0, 2), rmat.at<double>(2,2));
+    //} else if (rmat.at<double>(1, 0) < -.998) { // Singularity at south pole
+    //    x = 0;
+    //    y = -CV_PI / 2;
+    //    z = atan2(rmat.at<double>(0, 2), rmat.at<double>(2, 2));
+    //} else {
+    double r = atan2(-rmat.at<double>(1, 2), rmat.at<double>(1, 1));
+    double p = atan2(-rmat.at<double>(2, 0), sqrt(pow(rmat.at<double>(2, 1), 2) + pow(rmat.at<double>(2, 2), 2)));
+    //double p = asin(rmat.at<double>(1, 0));
+    double y = atan2(-rmat.at<double>(2, 0), rmat.at<double>(0, 0));
+    //}
+    tf2::Quaternion pose_quat;
+    pose_quat.setRPY(r, p, y);
+    return pose_quat;
+}
+
 Eigen::Quaterniond ChessboardFinder::rvec2quat(cv::Mat &rvec) {
     Eigen::Matrix3d rvec_eigen;
+    //cv::Mat rmat;
+    //cv::Rodrigues(rvec, rmat);
     cv::cv2eigen(rvec, rvec_eigen);
     Eigen::Quaterniond quat(rvec_eigen);
     return quat;

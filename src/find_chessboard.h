@@ -6,6 +6,7 @@
 #include <image_geometry/pinhole_camera_model.h>
 #include <Eigen/Dense>
 #include <opencv2/core/eigen.hpp>
+#include <tf2/LinearMath/Quaternion.h>
 
 class ChessboardFinder {
     // ROS
@@ -35,7 +36,8 @@ public:
     int get_nimages();
     void print_debug_shit();
     double calibrate(cv::Mat& rotationMatrix, cv::Mat& transformVector);
-    Eigen::Quaterniond rvec2quat(cv::Mat &rvec);
+    static tf2::Quaternion rvec2tfquat(cv::Mat &rmat);
+    static Eigen::Quaterniond rvec2quat(cv::Mat &rvec);
     ~ChessboardFinder();
 };
 
