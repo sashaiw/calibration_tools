@@ -47,10 +47,21 @@ int main(int argc, char** argv) {
     ROS_INFO_STREAM("Calibrated! RMS error: " << rms);
 
     tf2::Quaternion rquat = ChessboardFinder::rvec2tfquat(rmat);
+
+    // TF   OCV
+    // X  =  Z
+    // Y  = -X
+    // z  = -Y
+
+    // OCV  TF
+    // X  = -Y
+    // Y  = -Z
+    // Z  =  X
+
     ROS_INFO_STREAM("TF transform: " << std::endl
-                                     << tvec.at<double>(0,0) << " "
-                                     << tvec.at<double>(0,1) << " "
                                      << tvec.at<double>(0,2) << " "
+                                     << -tvec.at<double>(0,0) << " "
+                                     << -tvec.at<double>(0,1) << " "
                                      << rquat.x() << " "
                                      << rquat.y() << " "
                                      << rquat.z() << " "

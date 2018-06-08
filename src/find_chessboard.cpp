@@ -130,6 +130,7 @@ tf2::Quaternion ChessboardFinder::rvec2tfquat(cv::Mat &rmat) {
     //}
     tf2::Quaternion pose_quat;
     pose_quat.setRPY(r, p, y);
+    ROS_INFO_STREAM("RPY: " << r << " " << p << " " << y << std::endl);
     return pose_quat;
 }
 
