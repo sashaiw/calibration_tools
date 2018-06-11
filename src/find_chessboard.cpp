@@ -109,25 +109,10 @@ double ChessboardFinder::calibrate(cv::Mat& rotationMatrix, cv::Mat& transformVe
 }
 
 tf2::Quaternion ChessboardFinder::rvec2tfquat(cv::Mat &rmat) {
-    //cv::Mat euler(3, 1, CV_64F);
-    //cv::Mat rmat;
-    //cv::Rodrigues(rmat, rmat);
-    ROS_INFO_STREAM(rmat);
-
-    //if (rmat.at<double>(1, 0) > .998) { // Singularity at north pole
-    //    x = 0;
-    //    y = CV_PI / 2;
-    //    z = atan2(rmat.at<double>(0, 2), rmat.at<double>(2,2));
-    //} else if (rmat.at<double>(1, 0) < -.998) { // Singularity at south pole
-    //    x = 0;
-    //    y = -CV_PI / 2;
-    //    z = atan2(rmat.at<double>(0, 2), rmat.at<double>(2, 2));
-    //} else {
-    double r = atan2(-rmat.at<double>(1, 2), rmat.at<double>(1, 1));
+    // Let's just pretend there's no singularity, okay?
+    double r = atan2(rmat.at<double>(1, 0), rmat.at<double>(0, 0));
     double p = atan2(-rmat.at<double>(2, 0), sqrt(pow(rmat.at<double>(2, 1), 2) + pow(rmat.at<double>(2, 2), 2)));
-    //double p = asin(rmat.at<double>(1, 0));
-    double y = atan2(-rmat.at<double>(2, 0), rmat.at<double>(0, 0));
-    //}
+    double y = atan2(rmat.at<double>(2, 1), rmat.at<double>(2, 2));
     tf2::Quaternion pose_quat;
     pose_quat.setRPY(r, p, y);
     ROS_INFO_STREAM("RPY: " << r << " " << p << " " << y << std::endl);

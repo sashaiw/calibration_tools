@@ -15,10 +15,10 @@ int main(int argc, char** argv) {
     ChessboardFinder cf;
 
     ros::NodeHandle nh;
-    message_filters::Subscriber<sensor_msgs::Image> image_sub_1(nh, "/rgbd_cam_1/rgb/image_raw", 1);
-    message_filters::Subscriber<sensor_msgs::CameraInfo> info_sub_1(nh, "/rgbd_cam_1/rgb/camera_info", 1);
-    message_filters::Subscriber<sensor_msgs::Image> image_sub_2(nh, "/rgbd_cam_2/rgb/image_raw", 1);
-    message_filters::Subscriber<sensor_msgs::CameraInfo> info_sub_2(nh, "/rgbd_cam_2/rgb/camera_info", 1);
+    message_filters::Subscriber<sensor_msgs::Image> image_sub_1(nh, "/rgbd_cam_2/rgb/image_raw", 1);
+    message_filters::Subscriber<sensor_msgs::CameraInfo> info_sub_1(nh, "/rgbd_cam_2/rgb/camera_info", 1);
+    message_filters::Subscriber<sensor_msgs::Image> image_sub_2(nh, "/rgbd_cam_1/rgb/image_raw", 1);
+    message_filters::Subscriber<sensor_msgs::CameraInfo> info_sub_2(nh, "/rgbd_cam_1/rgb/camera_info", 1);
 
     typedef message_filters::sync_policies::ApproximateTime<sensor_msgs::Image, sensor_msgs::CameraInfo,
                                                             sensor_msgs::Image, sensor_msgs::CameraInfo>
