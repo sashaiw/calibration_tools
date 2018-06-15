@@ -134,7 +134,7 @@ int main(int argc, char* argv[]) {
 	
 	// TODO: test Matrix4f -> tf
 	tf::Transform final_transform = matrix4f_to_tf(icp_transform);
-	ROS_INFO_STREAM("TF transform (x, y, z, qx, qy, qz):\n" 
+	ROS_INFO_STREAM("TF transform (x, y, z, qx, qy, qz, qw):\n"
 			<< final_transform.getOrigin().getX() << " "
 			<< final_transform.getOrigin().getY() << " "
 			<< final_transform.getOrigin().getZ() << " "
