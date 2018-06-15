@@ -121,8 +121,6 @@ tf2::Quaternion ChessboardFinder::rvec2tfquat(cv::Mat &rmat) {
 
 Eigen::Quaterniond ChessboardFinder::rvec2quat(cv::Mat &rvec) {
     Eigen::Matrix3d rvec_eigen;
-    //cv::Mat rmat;
-    //cv::Rodrigues(rvec, rmat);
     cv::cv2eigen(rvec, rvec_eigen);
     Eigen::Quaterniond quat(rvec_eigen);
     return quat;
