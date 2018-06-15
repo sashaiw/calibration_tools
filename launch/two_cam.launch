@@ -1,0 +1,25 @@
+<launch>
+
+	<!-- DO NOT EDIT THIS -->
+	<!-- node pkg="tf" type="static_transform_publisher" name="crossbar_bcast" args="-0.073535 0 0.008 0 0 0 1 left_arm_mount crossbar_edge 100" / -->
+	<node pkg="tf" type="static_transform_publisher" name="crossbar_bcast" args="-0.119535 0 0.0121 0 0 0 1 left_arm_mount crossbar_edge 100" />
+	<node pkg="tf" type="static_transform_publisher" name="l_cam_bcast" args="0 0 0 0 0 0 1 l_cam_center rgbd_cam_1_link 100"/>
+	<node pkg="tf" type="static_transform_publisher" name="l_cam_center_bcast" args="0.086685 -0.225856 0.415355 -0.008142 0.187135 0.000924 0.9823 crossbar_edge l_cam_center 100" />
+	<node pkg="tf" type="static_transform_publisher" name="r_cam_bcast" args="0 0 0 0 0 0 1 r_cam_center rgbd_cam_2_link 100"/>
+
+
+	<!-- EDIT THIS -->
+	<!-- Left cam center to right cam center -->
+	<node pkg="tf" type="static_transform_publisher" name="r_cam_center_bcast" args="-0.0342407 0.798076 -0.108612 0.192606 0.622208 -0.229691 0.723189 l_cam_center r_cam_center 100"/>
+    
+    <include file="$(find calibration_tools)/launch/openni2.launch">
+            <arg name="camera" default="rgbd_cam_1" />
+            <arg name="device_id" default="1d27/0601@5/3" />
+    </include>
+    
+    <include file="$(find calibration_tools)/launch/openni2.launch">
+            <arg name="camera" default="rgbd_cam_2" />
+            <arg name="device_id" default="1d27/0600@2/4" />
+    </include>
+
+</launch>
