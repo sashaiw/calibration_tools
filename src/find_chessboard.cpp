@@ -23,7 +23,24 @@ ChessboardFinder::ChessboardFinder() {
     squareSize_ = .06;
     for (int j = 0; j < patternSize_.height; j++) {
         for (int k = 0; k < patternSize_.width; k++) {
-            obj_.push_back(cv::Point3f((float)k * squareSize_, (float)j * squareSize_, 0));
+            obj_.push_back(cv::Point3d((double)k * squareSize_, (double)j * squareSize_, 0));
+        }
+    }
+
+    cv::namedWindow(OPENCV_WINDOW_1);
+    cv::namedWindow(OPENCV_WINDOW_2);
+}
+
+ChessboardFinder::ChessboardFinder(int size_x, int size_y, double square_size) {
+    found_[0] = false;
+    found_[1] = false;
+
+    // Create model of chessboard
+    patternSize_ = cv::Size(size_x, size_y);
+    squareSize_ = (float)square_size;
+    for (int j = 0; j < patternSize_.height; j++) {
+        for (int k = 0; k < patternSize_.width; k++) {
+            obj_.push_back(cv::Point3d((double)k * squareSize_, (double)j * squareSize_, 0));
         }
     }
 
@@ -115,7 +132,7 @@ tf2::Quaternion ChessboardFinder::rvec2tfquat(cv::Mat &rmat) {
     double y = atan2(rmat.at<double>(2, 1), rmat.at<double>(2, 2));
     tf2::Quaternion pose_quat;
     pose_quat.setRPY(r, p, y);
-    ROS_INFO_STREAM("YPR: " << y << " " << p << " " << r << std::endl);
+    ROS_INFO_STREAM("YPR: " << y << " " << p << " " << r);
     return pose_quat;
 }
 

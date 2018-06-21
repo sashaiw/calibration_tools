@@ -27,7 +27,8 @@ class ChessboardFinder {
 
 public:
     ChessboardFinder();
-    void callback(const sensor_msgs::ImageConstPtr& msg_cam1,
+    ChessboardFinder(int size_x, int size_y, double square_size);
+        void callback(const sensor_msgs::ImageConstPtr& msg_cam1,
                                     const sensor_msgs::CameraInfoConstPtr& info_msg_cam1,
                                     const sensor_msgs::ImageConstPtr& msg_cam2,
                                     const sensor_msgs::CameraInfoConstPtr& info_msg_cam2);
