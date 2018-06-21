@@ -13,6 +13,8 @@ find_package(catkin REQUIRED COMPONENTS
   aruco
 )
 
+catkin_package()
+
 find_package(PCL 1.8 EXACT REQUIRED)
 find_package(OpenCV 2 REQUIRED)
 
