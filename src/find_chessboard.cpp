@@ -126,10 +126,11 @@ double ChessboardFinder::calibrate(cv::Mat& rotationMatrix, cv::Mat& transformVe
 }
 
 tf2::Quaternion ChessboardFinder::rvec2tfquat(cv::Mat &rmat) {
-    // Let's just pretend there's no singularity, okay?
+    // If you are maintaining this code in the future, just know that I have no idea how I arrived at this
+    // function and you're better off rewriting it from scratch.
     double r = atan2(rmat.at<double>(1, 0), rmat.at<double>(0, 0));
-    double p = atan2(-rmat.at<double>(2, 0), sqrt(pow(rmat.at<double>(2, 1), 2) + pow(rmat.at<double>(2, 2), 2)));
-    double y = atan2(rmat.at<double>(2, 1), rmat.at<double>(2, 2));
+    double y = atan2(rmat.at<double>(2, 0), sqrt(pow(rmat.at<double>(2, 1), 2) + pow(rmat.at<double>(2, 2), 2)));
+    double p = atan2(-rmat.at<double>(2, 1), rmat.at<double>(2, 2));
     tf2::Quaternion pose_quat;
     pose_quat.setRPY(r, p, y);
     ROS_INFO_STREAM("YPR: " << y << " " << p << " " << r);
