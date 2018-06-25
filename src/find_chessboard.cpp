@@ -9,7 +9,6 @@
 #include <opencv2/highgui/highgui.hpp>
 #include <Eigen/Dense>
 #include <opencv2/core/eigen.hpp>
-#include <tf2/LinearMath/Quaternion.h>
 
 static const std::string OPENCV_WINDOW_1 = "Camera 1";
 static const std::string OPENCV_WINDOW_2 = "Camera 2";
@@ -125,23 +124,24 @@ double ChessboardFinder::calibrate(cv::Mat& rotationMatrix, cv::Mat& transformVe
     return rms;
 }
 
-tf2::Quaternion ChessboardFinder::rvec2tfquat(cv::Mat &rmat) {
+tf2::Transform ChessboardFinder::cv2tf(cv::Mat &rmat, cv::Mat& tvec) {
     // If you are maintaining this code in the future, just know that I have no idea how I arrived at this
     // function and you're better off rewriting it from scratch.
+
+    // rmat->quaternion
     double r = atan2(rmat.at<double>(1, 0), rmat.at<double>(0, 0));
     double y = atan2(rmat.at<double>(2, 0), sqrt(pow(rmat.at<double>(2, 1), 2) + pow(rmat.at<double>(2, 2), 2)));
     double p = atan2(-rmat.at<double>(2, 1), rmat.at<double>(2, 2));
     tf2::Quaternion pose_quat;
     pose_quat.setRPY(r, p, y);
     ROS_INFO_STREAM("YPR: " << y << " " << p << " " << r);
-    return pose_quat;
-}
 
-Eigen::Quaterniond ChessboardFinder::rvec2quat(cv::Mat &rvec) {
-    Eigen::Matrix3d rvec_eigen;
-    cv::cv2eigen(rvec, rvec_eigen);
-    Eigen::Quaterniond quat(rvec_eigen);
-    return quat;
+    // tvec->tf
+    tf2::Vector3 pose_trans(tvec.at<double>(0,2), -tvec.at<double>(0,0), -tvec.at<double>(0,1));
+
+    // quaternion, translation -> transform
+    tf2::Transform tf(pose_quat, pose_trans);
+    return tf;
 }
 
 ChessboardFinder::~ChessboardFinder() {

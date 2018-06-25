@@ -7,10 +7,11 @@
 #include <Eigen/Dense>
 #include <opencv2/core/eigen.hpp>
 #include <tf2/LinearMath/Quaternion.h>
+#include <tf2/LinearMath/Transform.h>
+
 
 class ChessboardFinder {
     // ROS
-    ros::NodeHandle nh_;
     image_geometry::PinholeCameraModel cam_model_[2];
 
     // Chessboard Model
@@ -35,9 +36,8 @@ public:
     bool bothVisible();
     int get_image();
     int get_nimages();
-    void print_debug_shit();
     double calibrate(cv::Mat& rotationMatrix, cv::Mat& transformVector);
-    static tf2::Quaternion rvec2tfquat(cv::Mat &rmat);
+    static tf2::Transform cv2tf(cv::Mat &rmat, cv::Mat& tvec);
     static Eigen::Quaterniond rvec2quat(cv::Mat &rvec);
     ~ChessboardFinder();
 };

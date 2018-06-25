@@ -10,7 +10,6 @@ find_package(catkin REQUIRED COMPONENTS
   cv_bridge
   image_transport
   image_geometry
-  aruco
 )
 
 catkin_package()
@@ -26,7 +25,7 @@ include_directories(${PCL_INCLUDE_DIRS})
 link_directories(${PCL_LIBRARY_DIRS})
 add_definitions(${PCL_DEFINITIONS})
 
-add_executable(calibration_wizard src/calibration_wizard.cpp src/find_chessboard.h src/find_chessboard.cpp)
+add_executable(calibration_wizard src/calibration_wizard.cpp src/find_chessboard.h src/find_chessboard.cpp src/icp.h src/icp.cpp)
 target_link_libraries(calibration_wizard ${OpenCV_LIBRARIES})
 target_link_libraries(calibration_wizard ${catkin_LIBRARIES})
 
