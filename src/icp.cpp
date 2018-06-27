@@ -44,7 +44,7 @@ tf::Transform ICP::run_icp(tf::Transform best_guess) {
     pcl::removeNaNFromPointCloud(*cloud_in, *cloud_in, indices1);
     pcl::removeNaNFromPointCloud(*cloud_out, *cloud_out, indices2);
 
-    pcl_ros::transformPointCloud(*cloud_out, *cloud_out, best_guess);
+    pcl_ros::transformPointCloud(*cloud_in, *cloud_in, best_guess);
 
     pcl::IterativeClosestPoint<pcl::PointXYZRGB, pcl::PointXYZRGB> icp;
     icp.setInputSource(cloud_in);
@@ -55,7 +55,7 @@ tf::Transform ICP::run_icp(tf::Transform best_guess) {
     ROS_INFO_STREAM("has converged: " << icp.hasConverged() <<
                     " score: " << icp.getFitnessScore());
 
-    pcl::visualization::CloudViewer viewer("Simple Cloud Viewer");
+    pcl::visualization::CloudViewer viewer("Cloud");
     viewer.showCloud(Final, "1");
     viewer.showCloud(cloud_out, "2");
     //viewer.showCloud(cloud_in, "3");
