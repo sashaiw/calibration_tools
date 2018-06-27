@@ -11,6 +11,8 @@
 
 //#define RAD(deg) (deg * M_PI / 180.0)
 void print_tf_transform(tf2::Transform tf);
+tf::Transform tf22tf(tf2::Transform tf2);
+tf2::Transform tf2tf2(tf::Transform tf);
 
 int main(int argc, char** argv) {
     ros::init(argc, argv, "find_chessboard");
@@ -49,9 +51,9 @@ int main(int argc, char** argv) {
 
     typedef message_filters::sync_policies::ApproximateTime<sensor_msgs::Image, sensor_msgs::CameraInfo,
                                                             sensor_msgs::Image, sensor_msgs::CameraInfo>
-                                                            syncPolicy;
-    message_filters::Synchronizer<syncPolicy>
-            image_sync(syncPolicy(100), image_sub_2, info_sub_2, image_sub_1, info_sub_1);
+                                                            imageSyncPolicy;
+    message_filters::Synchronizer<imageSyncPolicy>
+            image_sync(imageSyncPolicy(100), image_sub_2, info_sub_2, image_sub_1, info_sub_1);
     image_sync.registerCallback(boost::bind(&ChessboardFinder::callback, &cf, _1, _2, _3, _4));
     ros::Rate r(30); // 10 hz
     cv::Mat rmat, tvec;
@@ -88,11 +90,42 @@ int main(int argc, char** argv) {
                                              << rquat.w());
     */
 
-    //message_filters::Synchronizer<syncPolicy>
-    //        cloud_sync(syncPolicy(100), cloud_sub_1, cloud_sub_2);
-    //cloud_sync.registerCallback(boost::bind(&ICP::callback, &cf, _1, _2));
+    typedef message_filters::sync_policies::ApproximateTime<sensor_msgs::PointCloud2, sensor_msgs::PointCloud2>
+            cloudSyncPolicy;
+
+    ICP icp;
+    message_filters::Synchronizer<cloudSyncPolicy>
+            cloud_sync(cloudSyncPolicy(100), cloud_sub_1, cloud_sub_2);
+    cloud_sync.registerCallback(boost::bind(&ICP::callback, &icp, _1, _2));
+
+
+
+    tf = tf2tf2(icp.run_icp(tf22tf(tf)));
+
+    ROS_INFO_STREAM("Estimate after ICP: ");
+    print_tf_transform(tf);
 
     return 0;
+}
+
+tf::Transform tf22tf(tf2::Transform tf2) {
+    tf::Transform tf;
+    tf.setRotation(tf::Quaternion(tf2.getRotation().getX(),
+                                  tf2.getRotation().getY(),
+                                  tf2.getRotation().getZ(),
+                                  tf2.getRotation().getW()));
+    tf.setOrigin(tf::Vector3(tf2.getOrigin().getX(), tf2.getOrigin().getY(), tf2.getOrigin().getZ()));
+    return tf;
+}
+
+tf2::Transform tf2tf2(tf::Transform tf) {
+    tf2::Transform tf2;
+    tf2.setRotation(tf2::Quaternion(tf.getRotation().getX(),
+                                    tf.getRotation().getY(),
+                                    tf.getRotation().getZ(),
+                                    tf.getRotation().getW()));
+    tf2.setOrigin(tf2::Vector3(tf.getOrigin().getX(), tf.getOrigin().getY(), tf.getOrigin().getZ()));
+    return tf2;
 }
 
 void print_tf_transform(tf2::Transform tf) {

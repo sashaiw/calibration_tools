@@ -14,8 +14,8 @@ class ICP {
 public:
     ICP();
     void callback(const sensor_msgs::PointCloud2ConstPtr& cloud_1, const sensor_msgs::PointCloud2ConstPtr& cloud_2);
-    tf::Transform run_icp();
-
+    tf::Transform run_icp(tf::Transform best_guess);
+    tf::Transform matrix4f_to_tf(Eigen::Matrix4f em);
     ~ICP();
 };
 
