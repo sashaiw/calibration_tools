@@ -1,5 +1,4 @@
 #include "find_chessboard.h"
-#include "icp.h"
 
 #include <message_filters/subscriber.h>
 #include <message_filters/time_synchronizer.h>
@@ -8,14 +7,14 @@
 #include <sensor_msgs/PointCloud2.h>
 #include <tf2/LinearMath/Quaternion.h>
 #include <tf2/LinearMath/Transform.h>
+#include <tf/LinearMath/Transform.h>
 
-//#define RAD(deg) (deg * M_PI / 180.0)
 void print_tf_transform(tf2::Transform tf);
 tf::Transform tf22tf(tf2::Transform tf2);
 tf2::Transform tf2tf2(tf::Transform tf);
 
 int main(int argc, char** argv) {
-    ros::init(argc, argv, "find_chessboard");
+    ros::init(argc, argv, "calibration_wizard");
     ros::NodeHandle nh;
 
     image_transport::Publisher image_pub_cam1_;
@@ -27,6 +26,7 @@ int main(int argc, char** argv) {
     nh.param<std::string>("info_topic_1", info_topic_1, "/rgbd_cam_1/rgb/camera_info");
     nh.param<std::string>("image_topic_2", image_topic_2, "/rgbd_cam_2/rgb/image_raw");
     nh.param<std::string>("image_topic_2", info_topic_2, "/rgbd_cam_2/rgb/camera_info");
+
     nh.param<std::string>("cloud_topic_1", cloud_topic_1, "/rgbd_cam_1/depth_registered/points");
     nh.param<std::string>("cloud_topic_2", cloud_topic_2, "/rgbd_cam_2/depth_registered/points");
 
@@ -42,8 +42,6 @@ int main(int argc, char** argv) {
     message_filters::Subscriber<sensor_msgs::CameraInfo> info_sub_1(nh, info_topic_1, 1);
     message_filters::Subscriber<sensor_msgs::Image> image_sub_2(nh, image_topic_2, 1);
     message_filters::Subscriber<sensor_msgs::CameraInfo> info_sub_2(nh, info_topic_2, 1);
-    message_filters::Subscriber<sensor_msgs::PointCloud2> cloud_sub_1(nh, cloud_topic_1, 1);
-    message_filters::Subscriber<sensor_msgs::PointCloud2> cloud_sub_2(nh, cloud_topic_1, 1);
 
 
     int nimages;
@@ -73,38 +71,6 @@ int main(int argc, char** argv) {
     ROS_INFO_STREAM("Calibrated! RMS error: " << rms);
     ROS_INFO_STREAM("Estimate from chessboard: ");
     print_tf_transform(tf);
-
-    //tf2::Quaternion rquat = ChessboardFinder::rvec2tfquat(rmat);
-
-    //tf2::Vector3 trans(tvec.at<double>(0,2), -tvec.at<double>(0,0), -tvec.at<double>(0,1));
-    //tf2::Transform transform(rquat, trans);
-
-    /*
-    ROS_INFO_STREAM("TF transform from cb: " << std::endl
-                                             << tvec.at<double>(0,2) << " "
-                                             << -tvec.at<double>(0,0) << " "
-                                             << -tvec.at<double>(0,1) << " "
-                                             << rquat.x() << " "
-                                             << rquat.y() << " "
-                                             << rquat.z() << " "
-                                             << rquat.w());
-    */
-
-    typedef message_filters::sync_policies::ApproximateTime<sensor_msgs::PointCloud2, sensor_msgs::PointCloud2>
-            cloudSyncPolicy;
-
-    ICP icp;
-    message_filters::Synchronizer<cloudSyncPolicy>
-            cloud_sync(cloudSyncPolicy(100), cloud_sub_1, cloud_sub_2);
-    cloud_sync.registerCallback(boost::bind(&ICP::callback, &icp, _1, _2));
-
-
-
-    tf = tf2tf2(icp.run_icp(tf22tf(tf)));
-
-    ROS_INFO_STREAM("Estimate after ICP: ");
-    print_tf_transform(tf);
-
     return 0;
 }
 
@@ -129,17 +95,6 @@ tf2::Transform tf2tf2(tf::Transform tf) {
 }
 
 void print_tf_transform(tf2::Transform tf) {
-
-    // TF   OCV
-    // X  =  Z
-    // Y  = -X
-    // z  = -Y
-
-    // OCV  TF
-    // X  = -Y
-    // Y  = -Z
-    // Z  =  X
-
     ROS_INFO_STREAM(   tf.getOrigin().getX() << " "
                     << tf.getOrigin().getY() << " "
                     << tf.getOrigin().getZ() << " "

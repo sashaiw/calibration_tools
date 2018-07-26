@@ -66,6 +66,14 @@ void ChessboardFinder::callback(const sensor_msgs::ImageConstPtr& msg_cam1,
     }
     imageSize = cv::Size(cv_ptr[0]->image.cols, cv_ptr[0]->image.rows);
 
+    cvtColor(cv_ptr[0]->image, cv_ptr[0]->image, CV_BGR2GRAY);
+    cvtColor(cv_ptr[1]->image, cv_ptr[1]->image, CV_BGR2GRAY);
+
+    cv::equalizeHist(cv_ptr[0]->image, cv_ptr[0]->image);
+    cv::equalizeHist(cv_ptr[1]->image, cv_ptr[1]->image);
+
+    //cv::normalize(cv_ptr[0]->image, cv_ptr[1]->image, 255, 0, cv::NORM_MINMAX);
+
     cam_model_[0].fromCameraInfo(info_msg_cam2);
     cam_model_[1].fromCameraInfo(info_msg_cam2);
 
