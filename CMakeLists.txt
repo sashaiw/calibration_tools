@@ -14,16 +14,16 @@ find_package(catkin REQUIRED COMPONENTS
 
 catkin_package()
 
-find_package(PCL 1.8 EXACT REQUIRED)
+#find_package(PCL 1.8 EXACT REQUIRED)
 find_package(OpenCV 2 REQUIRED)
 
 include_directories(${catkin_INCLUDE_DIRS})
 include_directories(${OpenCV_INCLUDE_DIRS})
 
 # PCL
-include_directories(${PCL_INCLUDE_DIRS})
-link_directories(${PCL_LIBRARY_DIRS})
-add_definitions(${PCL_DEFINITIONS})
+#include_directories(${PCL_INCLUDE_DIRS})
+#link_directories(${PCL_LIBRARY_DIRS})
+#add_definitions(${PCL_DEFINITIONS})
 
 add_executable(calibration_wizard src/calibration_wizard.cpp src/find_chessboard.h src/find_chessboard.cpp)
 target_link_libraries(calibration_wizard ${OpenCV_LIBRARIES})
