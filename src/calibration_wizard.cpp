@@ -25,7 +25,7 @@ int main(int argc, char** argv) {
     nh.param<std::string>("image_topic_1", image_topic_1, "/rgbd_cam_1/rgb/image_raw");
     nh.param<std::string>("info_topic_1", info_topic_1, "/rgbd_cam_1/rgb/camera_info");
     nh.param<std::string>("image_topic_2", image_topic_2, "/rgbd_cam_2/rgb/image_raw");
-    nh.param<std::string>("image_topic_2", info_topic_2, "/rgbd_cam_2/rgb/camera_info");
+    nh.param<std::string>("info_topic_2", info_topic_2, "/rgbd_cam_2/rgb/camera_info");
 
     nh.param<std::string>("cloud_topic_1", cloud_topic_1, "/rgbd_cam_1/depth_registered/points");
     nh.param<std::string>("cloud_topic_2", cloud_topic_2, "/rgbd_cam_2/depth_registered/points");
