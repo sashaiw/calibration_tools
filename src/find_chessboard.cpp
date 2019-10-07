@@ -127,8 +127,8 @@ double ChessboardFinder::calibrate(cv::Mat& rotationMatrix, cv::Mat& transformVe
                                      cam_model_[1].intrinsicMatrix(), cam_model_[1].distortionCoeffs(),
                                      imageSize,
                                      rotationMatrix, transformVector, essentialMatrix, fundamentalMatrix,
-                                     cv::TermCriteria(cv::TermCriteria::COUNT+cv::TermCriteria::EPS, 30, 1e-6),
-                                     CV_CALIB_FIX_INTRINSIC);
+                                     CV_CALIB_FIX_INTRINSIC,
+                                     cv::TermCriteria(cv::TermCriteria::COUNT+cv::TermCriteria::EPS, 30, 1e-6));
     return rms;
 }
 
