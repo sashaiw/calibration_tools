@@ -15,7 +15,7 @@ tf2::Transform tf2tf2(tf::Transform tf);
 
 int main(int argc, char** argv) {
     ros::init(argc, argv, "calibration_wizard");
-    ros::NodeHandle nh;
+    ros::NodeHandle nh("~");
 
     image_transport::Publisher image_pub_cam1_;
     image_transport::Publisher image_pub_cam2_;
@@ -29,6 +29,13 @@ int main(int argc, char** argv) {
 
     nh.param<std::string>("cloud_topic_1", cloud_topic_1, "/rgbd_cam_1/depth_registered/points");
     nh.param<std::string>("cloud_topic_2", cloud_topic_2, "/rgbd_cam_2/depth_registered/points");
+
+
+    ROS_INFO_STREAM("Subscribing to topics:\n"
+                    << image_topic_1 << std::endl
+                    << info_topic_1 << std::endl
+                    << image_topic_2 << std::endl
+                    << info_topic_2 << std::endl);
 
     int cb_size_x, cb_size_y;
     double cb_square_size;
